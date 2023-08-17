@@ -1,23 +1,25 @@
 <!doctype html>
 <html>
 <head>
-    <title>Flask Video Streaming</title>
+    <title>Multi-Feed Video Streaming</title>
 </head>
 <body>
-    <h1>Total Count Up: <span id="total-up">0</span></h1>
-    <h1>Total Count Down: <span id="total-down">0</span></h1>
-    <img src="{{ url_for('video_feed') }}" width="640" height="480">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var socket = new WebSocket('ws://' + window.location.host + '/websocket');
-            
-            socket.onmessage = function(e) {
-                var data = JSON.parse(e.data);
-                document.getElementById('total-up').innerHTML = data.totalUp;
-                document.getElementById('total-down').innerHTML = data.totalDown;
-            };
-        });
-    </script>
+    <div class="video-container">
+        {% for i in range(num_feeds) %}
+        <div class="video-feed">
+            <img src="{{ url_for('video_feed', feed_index=i) }}" width="640" height="480">
+        </div>
+        {% endfor %}
+    </div>
+    <style>
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 10px;
+        }
+        .video-feed {
+            margin: 10px;
+        }
+    </style>
 </body>
 </html>
