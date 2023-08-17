@@ -1,0 +1,67 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Factory Entrance</title>
+</head>
+<body>
+    <h1>Factory Entrance</h1>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    
+    <script type="text/javascript">
+        // This script will refresh the image every 1 second
+        function refreshImage() {
+            var imgElement = document.querySelector('img');
+            imgElement.src = imgElement.src.split('?')[0] + '?' + new Date().getTime();
+        }
+        setInterval(refreshImage, 1000);
+    </script>
+</body>
+</html> -->
+
+
+<!-- v2 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Factory Entrance</title>
+</head>
+<body>
+    <h1>Factory Entrance</h1>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    
+    <div>
+        <h2>People Counting</h2>
+        <p>Total In: <span id="totalIn">0</span></p>
+        <p>Total Out: <span id="totalOut">0</span></p>
+    </div>
+    
+    <script type="text/javascript">
+        // This script will refresh the image every 1 second
+        function refreshImage() {
+            var imgElement = document.querySelector('img');
+            imgElement.src = imgElement.src.split('?')[0] + '?' + new Date().getTime();
+        }
+        
+        setInterval(refreshImage, 1000);
+        
+        // Function to update the counting information
+        function updateCounting(totalIn, totalOut) {
+            document.getElementById('totalIn').textContent = totalIn;
+            document.getElementById('totalOut').textContent = totalOut;
+        }
+        
+        // You can use WebSockets or AJAX to update counting information from the server
+        // Here's an example using a dummy function
+        function updateCountsFromServer() {
+            // Replace these values with actual counts received from the server
+            var newTotalIn = 10;
+            var newTotalOut = 5;
+            updateCounting(newTotalIn, newTotalOut);
+        }
+        
+        // Call the updateCountsFromServer function periodically
+        setInterval(updateCountsFromServer, 5000);  // Update every 5 seconds
+    </script>
+</body>
+</html>
