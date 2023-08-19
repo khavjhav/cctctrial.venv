@@ -1,0 +1,19 @@
+<div class="box">
+    <p class="title is-5">Stream</p>
+    <hr>
+    <img id="frame" src="">
+    <div id="textArea"></div>
+    <script>
+        let ws = new WebSocket("ws://localhost:8000/get-stream");
+        let image = document.getElementById("frame");
+        image.onload = function(){
+            URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
+        } 
+        ws.onmessage = function(event) {
+            if (typeof event.data === 'string') 
+                document.getElementById("textArea").innerHTML = event.data;
+            else
+                image.src = URL.createObjectURL(event.data);
+        };
+    </script>
+</div>
