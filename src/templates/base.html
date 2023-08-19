@@ -5,25 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>People Count | KDS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  </head>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    </head>
   <body>
   <section class="section">
     <div class="container">
         <div class="columns">
             <div class="column is-narrow">
               <div class="box" style="width: 700px;">
-                <p class="title is-5">Narrow column</p>
-                <p class="subtitle">This column is only 200px wide.</p>
+                <p class="title is-5">In/Out Chart</p>
+                <hr>
+                <div>
+                  <canvas id="myChart"></canvas>
+                </div>
+                
+                
+                <script>
+                  const ctx = document.getElementById('myChart');
+                  new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                      labels: ['IN', 'OUT'],
+                      datasets: [{
+                        data: [19, 19],
+                        borderWidth: 1,
+                        backgroundColor: [
+                          'rgba(54, 162, 235, 0.5)',
+                          'rgba(255, 99, 0, 0.5)'
+                        ]
+                      }]
+                    },
+                    options: {
+                      legend: {display: false},
+                      scales: {
+                        y: {
+                          beginAtZero: true
+                        }
+                      }
+                    }
+                  });
+                </script>
+
               </div>
             </div>
             <div class="column">
                 <div class="box">
-                    <p class="title is-5">Flexible column</p>
+                    <p class="title is-5">Stream</p>
+                    <input class="input" id="channel-id" type="text">
+                    <br><br>
+                    <button onclick="start()" type="button" id="start" class="button is-primary">Start</button>
                     <hr>
                     <img id="frame" src="">
                     <div id="textArea"></div>
                     <script>
-                        let ws = new WebSocket("ws://localhost:8000/get-stream");
+                      let channel_id = "0";
+                      function start(){
+                        channel_id = document.getElementById("channel-id").value
+                      
+                        let ws = new WebSocket(`ws://127.0.0.1:8000/get-stream/${channel_id}`);
                         let image = document.getElementById("frame");
                         image.onload = function(){
                             URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
@@ -34,6 +74,7 @@
                             else
                                 image.src = URL.createObjectURL(event.data);
                         };
+                      };
                     </script>
                 </div>
             </div>

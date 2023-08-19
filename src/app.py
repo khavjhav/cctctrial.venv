@@ -9,8 +9,10 @@ import os
 
 app = FastAPI()
 
-video = "rtsp://arnab:kh4vjh4v@103.205.180.214:554/Streaming/channels/1902"
-cap = cv2.VideoCapture(video)
+
+CHANNEL_ID = 0
+# video = f"rtsp://arnab:kh4vjh4v@103.205.180.214:554/Streaming/channels/{CHANNEL_ID}"
+# cap = cv2.VideoCapture(video)
 model = YOLO("./models/yolov8n.onnx")
 # model.export(format="onnx")
 
@@ -23,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(Path(BASE_DIR, "templates")))
 
 
-@app.get("/base")
+@app.get("/")
 async def base(request: Request):
     return templates.TemplateResponse("base.html", {"request": request})
 
@@ -33,9 +35,12 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.websocket("/get-stream")
-async def get_stream(websocket: WebSocket):
+@app.websocket("/get-stream/{channel_id}")
+async def get_stream(websocket: WebSocket, channel_id: str):
+    video = f"rtsp://arnab:kh4vjh4v@103.205.180.214:554/Streaming/channels/{channel_id}"
+    cap = cv2.VideoCapture(video)
     await websocket.accept()
+
     try:
         while True:
             success, frame = cap.read()
