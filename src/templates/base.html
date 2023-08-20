@@ -19,33 +19,7 @@
                 <div>
                   <canvas id="myChart"></canvas>
                 </div>
-                
-                
-                <script>
-                  const ctx = document.getElementById('myChart');
-                  new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                      labels: ['IN', 'OUT'],
-                      datasets: [{
-                        data: [19, 19],
-                        borderWidth: 1,
-                        backgroundColor: [
-                          'rgba(54, 162, 235, 0.5)',
-                          'rgba(255, 99, 0, 0.5)'
-                        ]
-                      }]
-                    },
-                    options: {
-                      legend: {display: false},
-                      scales: {
-                        y: {
-                          beginAtZero: true
-                        }
-                      }
-                    }
-                  });
-                </script>
+              
 
               </div>
             </div>
@@ -54,28 +28,84 @@
                     <p class="title is-5">Stream</p>
                     <input class="input" id="channel-id" type="text">
                     <br><br>
-                    <button onclick="start()" type="button" id="start" class="button is-primary">Start</button>
+                    <span>
+                      <button onclick="start()" type="button" id="start" class="button is-primary">Start</button>
+                      <!-- <button type="button" id="stopButton" class="button is-danger">Stop</button> -->
+                    </span>
+                    
                     <hr>
                     <img id="frame" src="">
                     <div id="textArea"></div>
+
+
                     <script>
-                      let channel_id = "0";
                       function start(){
+                        // Chart.js Bar chart plot Configs
+                        const ctx = document.getElementById('myChart');
+                        const barChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                              labels: ['IN', 'OUT'],
+                              datasets: [{
+                                data: [0, 0],
+                                borderWidth: 1,
+                                backgroundColor: [
+                                  'rgba(54, 162, 235, 0.5)',
+                                  'rgba(255, 99, 0, 0.5)'
+                                ]
+                              }]
+                            },
+                            options: {
+                              legend: {display: false},
+                              scales: {
+                                y: {
+                                  beginAtZero: true
+                                }
+                              }
+                            }
+                          });
+
                         channel_id = document.getElementById("channel-id").value
-                      
                         let ws = new WebSocket(`ws://127.0.0.1:8000/get-stream/${channel_id}`);
+                        console.log("WebSocket connection opened.");
+
+
                         let image = document.getElementById("frame");
                         image.onload = function(){
                             URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
                         } 
+
+
+
                         ws.onmessage = function(event) {
-                            if (typeof event.data === 'string') 
-                                document.getElementById("textArea").innerHTML = event.data;
-                            else
+                            if (typeof event.data === 'string'){
+                                // split by comma
+                                // document.getElementById("textArea").innerHTML = event.data.split(',')[0];
+                                inCount = event.data.split(',')[0];
+                                outCount = event.data.split(',')[1];
+                                console.log(event.data.split(',')[0], event.data.split(',')[1]); 
+                                barChart.data.datasets[0].data = [inCount, outCount];
+                                barChart.update(); 
+                                // document.getElementById("textArea").innerHTML = event.data;
+                              }
+                            else{
                                 image.src = URL.createObjectURL(event.data);
+                            }
                         };
+
+                        const stopButton = document.getElementById("stopButton");
+                        stopButton.addEventListener("click", function() {
+                            ws.send("stop");
+                            // ws.close(); // Close the WebSocket connection
+                            console.log("WebSocket connection closed.");
+                        });
                       };
+
+                      
+
                     </script>
+
+
                 </div>
             </div>
           </div>
