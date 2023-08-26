@@ -13,11 +13,13 @@
     <div class="container">
         <div class="columns">
             <div class="column is-narrow">
-              <div class="box" style="width: 700px;">
-                <p class="title is-5">In/Out Chart</p>
+              <div class="box" style="width: 450px;">
+                <p class="title is-5">In/Out Table</p>
                 <hr>
                 <div>
-                  <canvas id="myChart"></canvas>
+                  <!-- <canvas id="myChart"></canvas>
+                  -->
+                  {% include "table.html" %}
                 </div>
               
 
@@ -26,47 +28,33 @@
             <div class="column">
                 <div class="box">
                     <p class="title is-5">Stream</p>
-                    <input class="input" id="channel-id" type="text">
-                    <br><br>
-                    <span>
+                    <!-- <input class="input" id="channel-id" type="text">
+                    <br><br> -->
+                    <!-- <span>
                       <button onclick="start()" type="button" id="start" class="button is-primary">Start</button>
-                      <!-- <button type="button" id="stopButton" class="button is-danger">Stop</button> -->
-                    </span>
+                      <button type="button" id="stopButton" class="button is-danger">Stop</button>
+                    </span> -->
                     
                     <hr>
-                    <img id="frame" src="">
+                    <span style="padding-left: 15px;">
+                      <img id="frame" src="http://127.0.0.1:8000/api/v1/stream/1902" width="48%">
+                      <img id="frame" src="http://127.0.0.1:8000/api/v1/stream/702" width="48%">
+                    </span>
+                    <br>
+                    <span style="padding-left: 15px;">
+                      <img id="frame" src="http://127.0.0.1:8000/api/v1/stream/1202" width="48%">
+                      <img id="frame" src="http://127.0.0.1:8000/api/v1/stream/3202" width="48%">
+                    </span>
+                    
                     <div id="textArea"></div>
 
 
                     <script>
                       function start(){
-                        // Chart.js Bar chart plot Configs
-                        const ctx = document.getElementById('myChart');
-                        const barChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                              labels: ['IN', 'OUT'],
-                              datasets: [{
-                                data: [0, 0],
-                                borderWidth: 1,
-                                backgroundColor: [
-                                  'rgba(54, 162, 235, 0.5)',
-                                  'rgba(255, 99, 0, 0.5)'
-                                ]
-                              }]
-                            },
-                            options: {
-                              legend: {display: false},
-                              scales: {
-                                y: {
-                                  beginAtZero: true
-                                }
-                              }
-                            }
-                          });
+
 
                         channel_id = document.getElementById("channel-id").value
-                        let ws = new WebSocket(`ws://127.0.0.1:8000/get-stream/${channel_id}`);
+                        let ws = new WebSocket(`ws://127.0.0.1:8000/api/v1/ws-get-stream/${channel_id}`);
                         console.log("WebSocket connection opened.");
 
 
