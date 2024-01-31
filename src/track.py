@@ -3,11 +3,14 @@ import time
 from ultralytics import YOLO
 import supervision as sv
 
-from utils.coco import COCO_CLASSES
+from ml_engine.utils.coco import COCO_CLASSES
+
+import torch
+torch.cuda.set_device(0)
 
 rtsp = "rtsp://arnab:kh4vjh4v@103.205.180.214:554/Streaming/channels/1902"
 video = "test_video.mp4"
-model = YOLO("./models/yolov8n.onnx")
+model = YOLO("./ml_engine/models/yolov8n.pt")
 
 prev_frame_time = 0
 new_frame_time = 0
@@ -21,8 +24,9 @@ line_annotator = sv.LineZoneAnnotator(thickness=2, text_thickness=1, text_scale=
 box_annotator = sv.BoxAnnotator(thickness=2, text_thickness=1, text_scale=0.5)
 
 
-for result in model.track(source=0, show=False, stream=True, agnostic_nms=True):
+for result in model.track(source=rtsp, show=False, stream=True, agnostic_nms=True):
     frame = result.orig_img
+    print(frame.shape)
     detections = sv.Detections.from_yolov8(result)
 
     if result.boxes.id is not None:
